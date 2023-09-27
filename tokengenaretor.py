@@ -7,11 +7,11 @@ import requests
 from urllib.parse import parse_qs,urlparse
 import hashlib
 
-APIKEY =    '8cac21d8da3c4430a357e16423d14d73'
-secretKey = '2023.80807a86c1ee467ea36a3dbb25119e8fa082af04eb4b9e62'
-totp_key= '3U3SU2TPECDQKRGFA364DIGSE47477FM'
-password = 'Mita99*daw'
-userid =  'FT032354'
+APIKEY =    '8cac21d8da3c4430a357e16423d14d733'
+secretKey = '2023.80807a86c1ee467ea36a3dbb25119e8fa082af04eb4b9e622'
+totp_key= '3U3SU2TPECDQKRGFA364DIGSE47477FMK'
+password = 'Nothing'
+userid =  'FT032355'
 passwordEncrpted =  hashlib.sha256(password.encode()).hexdigest()
 
 url = f"https://auth.flattrade.in/?app_key={APIKEY}"
