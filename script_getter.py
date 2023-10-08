@@ -19,11 +19,16 @@ api = FlatTradeApiPy()
 
 ret = api.set_session(userid= userid, password = password, usertoken= token)
 
-print(api.get_limits())
+# print(api.get_limits())
 
 exch  = 'NFO'
 query = 'NIFTY 26OCT CE'
 ret = api.searchscrip(exchange=exch, searchtext=query)
 import pandas as pd
 df = pd.DataFrame.from_dict(ret['values'])
-print(df["optt"])
+# print(df["optt"])
+
+ret = api.get_holdings()
+# print(ret)
+df = pd.DataFrame.from_dict(ret)
+print(df)
