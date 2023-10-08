@@ -1,0 +1,118 @@
+
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
+import json
+import requests
+import time
+import pyotp
+import os
+import requests
+from urllib.parse import parse_qs,urlparse
+import hashlib
+
+
+# In[ ]:
+
+
+
+APIKEY =    '22c07d7800e678a3c23'
+secretKey = '2022.156b84bchs7jjdu9smba51b87c73c824cefc'
+totp_key= '54EX47RIY57S3D3445DUU4626'
+password = 'passe$8'
+userid =  'FT989729'
+
+
+# In[ ]:
+
+
+sesUrl = 'https://authapi.flattrade.in/auth/session'
+passwordEncrpted =  hashlib.sha256(password.encode()).hexdigest()
+ses = requests.Session()
+
+res_pin = ses.post(sesUrl)
+sid = res_pin.text
+print(f'sid {sid}')
+url2 = 'https://authapi.flattrade.in/ftauth'
+payload = {"UserName":userid,"Password":passwordEncrpted,"PAN_DOB":pyotp.TOTP(totp_key).now(),"App":"","ClientID":"","Key":"","APIKey":APIKEY,"Sid":sid}
+res2 = ses.post(url2, json=payload)
+reqcodeRes = res2.json()
+print(reqcodeRes)
+parsed = urlparse(reqcodeRes['RedirectURL'])
+reqCode = parse_qs(parsed.query)['code'][0]
+api_secret =APIKEY+ reqCode + secretKey
+api_secret =  hashlib.sha256(api_secret.encode()).hexdigest()
+payload = {"api_key":APIKEY, "request_code":reqCode, "api_secret":api_secret}
+url3 = 'https://authapi.flattrade.in/trade/apitoken'
+res3 = ses.post(url3, json=payload)
+print(res3.json())
+token = res3.json()['token']
+token
+
+
+# In[ ]:
+
+
+os.getcwd()
+
+
+# In[ ]:
+
+
+pip install NorenRestApiPy-0.0.20-py2.py3-none-any.whl
+
+
+# In[ ]:
+
+
+from NorenRestApiPy.NorenApi import  NorenApi
+
+class FlatTradeApiPy(NorenApi):
+    def __init__(self):
+         NorenApi.__init__(self, host='https://piconnect.flattrade.in/PiConnectTP/', websocket='wss://piconnect.flattrade.in/PiConnectWSTp/', eodhost='https://web.flattrade.in/chartApi/getdata/')
+
+api = FlatTradeApiPy()
+
+
+
+
+ret = api.set_session(userid= userid, password = password, usertoken= token)
+
+api.get_limits()
+
+
+# In[ ]:
+
+
+ret = api.place_order(buy_or_sell='B', product_type='M',
+                        exchange='NFO', tradingsymbol='ZYDUSLIFE25JAN23P585',
+                        quantity=1, discloseqty=0,price_type='SL-LMT', price=200.00, trigger_price=199.50,
+                        retention='DAY', remarks='my_order_001')
+ret
+
+
+# In[ ]:
+
+
+ret = api.get_order_book()
+print(ret)
+
+
+# In[ ]:
+
+
+import datetime
+lastBusDay = datetime.datetime.today()
+lastBusDay = lastBusDay.replace(hour=0, minute=0, second=0, microsecond=0)
+api.get_time_price_series(exchange='NSE', token='22', starttime=lastBusDay.timestamp(), interval=5)
+
+
+# In[ ]:
+
+
+import pandas as pd
+nfoDf =  pd.read_csv('https://api.shoonya.com/NFO_symbols.txt.zip',storage_options=  {"User-Agent": "pandas"})
+nfoDf
