@@ -1,9 +1,3 @@
-import pandas as pd
-nfoDf =  pd.read_csv("NSE_symbols.txt.zip")
-print(nfoDf.head())
-
-
-
 
 #set token and user id
 #paste the token generated using the login flow described 
@@ -26,3 +20,10 @@ api = FlatTradeApiPy()
 ret = api.set_session(userid= userid, password = password, usertoken= token)
 
 print(api.get_limits())
+
+exch  = 'NFO'
+query = 'NIFTY 26OCT CE'
+ret = api.searchscrip(exchange=exch, searchtext=query)
+import pandas as pd
+df = pd.DataFrame.from_dict(ret['values'])
+print(df["optt"])
