@@ -18,7 +18,7 @@ userid =  'FT032354'
 passwordEncrpted =  hashlib.sha256(password.encode()).hexdigest()
 ses = requests.Session()
 
-sid = "b3507565a9c4488eb6050f55e3d4ddede2d4948c91b99fe168e0d893e291e14a"
+sid = "02d1004f8e1033b2f0a9b6ee007dd7506206da7fab3f9b7c789a62e95ab43de3"
 
 
 url2 = 'https://authapi.flattrade.in/ftauth'
