@@ -1,11 +1,38 @@
+import json
 import requests
+import time
+import pyotp
+import os
+import requests
+from urllib.parse import parse_qs,urlparse
+import hashlib
 
-sesurl = "https://authapi.flattrade.in/auth/session"
-sesurl = "https://auth.flattrade.in/?app_key=8cac21d8da3c4430a357e16423d14d73&sid=8a64eb731815ad67e0649b64a843946d398a30c29f82fe714fad17711f74b46c"
 
+
+APIKEY =    '8cac21d8da3c4430a357e16423d14d73'
+secretKey = '2023.80807a86c1ee467ea36a3dbb25119e8fa082af04eb4b9e62'
+totp_key= '3U3SU2TPECDQKRGFA364DIGSE47477FM'
+password = 'Mita99*daw'
+userid =  'FT032354'
+
+passwordEncrpted =  hashlib.sha256(password.encode()).hexdigest()
 ses = requests.Session()
-respin = ses.post(sesurl)
 
-sid = respin.headers
+sid = "b3507565a9c4488eb6050f55e3d4ddede2d4948c91b99fe168e0d893e291e14a"
 
-print(sid)
+
+url2 = 'https://authapi.flattrade.in/ftauth'
+payload = {"UserName":userid,"Password":passwordEncrpted,"PAN_DOB":pyotp.TOTP(totp_key).now(),"App":"","ClientID":"","Key":"","APIKey":APIKEY,"Sid":sid}
+res2 = ses.post(url2, json=payload)
+reqcodeRes = res2.json()
+print(reqcodeRes)
+parsed = urlparse(reqcodeRes['RedirectURL'])
+reqCode = parse_qs(parsed.query)['code'][0]
+api_secret =APIKEY+ reqCode + secretKey
+api_secret =  hashlib.sha256(api_secret.encode()).hexdigest()
+payload = {"api_key":APIKEY, "request_code":reqCode, "api_secret":api_secret}
+url3 = 'https://authapi.flattrade.in/trade/apitoken'
+res3 = ses.post(url3, json=payload)
+print(res3.json())
+token = res3.json()['token']
+print(token)
