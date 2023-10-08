@@ -18,14 +18,14 @@ userid =  'FT032354'
 passwordEncrpted =  hashlib.sha256(password.encode()).hexdigest()
 ses = requests.Session()
 
-sid = "02d1004f8e1033b2f0a9b6ee007dd7506206da7fab3f9b7c789a62e95ab43de3"
+sid = "248b2eb277ab853e0d295db8bcb820c72a5bfd092f89bfcd00c9ae34b688bb82"
 
 
 url2 = 'https://authapi.flattrade.in/ftauth'
 payload = {"UserName":userid,"Password":passwordEncrpted,"PAN_DOB":pyotp.TOTP(totp_key).now(),"App":"","ClientID":"","Key":"","APIKey":APIKEY,"Sid":sid}
 res2 = ses.post(url2, json=payload)
 reqcodeRes = res2.json()
-print(reqcodeRes)
+# print(reqcodeRes)
 parsed = urlparse(reqcodeRes['RedirectURL'])
 reqCode = parse_qs(parsed.query)['code'][0]
 api_secret =APIKEY+ reqCode + secretKey
@@ -33,6 +33,6 @@ api_secret =  hashlib.sha256(api_secret.encode()).hexdigest()
 payload = {"api_key":APIKEY, "request_code":reqCode, "api_secret":api_secret}
 url3 = 'https://authapi.flattrade.in/trade/apitoken'
 res3 = ses.post(url3, json=payload)
-print(res3.json())
+# print(res3.json())
 token = res3.json()['token']
 print(token)
