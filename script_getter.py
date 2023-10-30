@@ -2,11 +2,19 @@
 #set token and user id
 #paste the token generated using the login flow described 
 # in LOGIN FLOW of https://pi.flattrade.in/docs
-token='d3c4848282de216e8c630ddc740d9a6924726f38f10be30a990417f3e5ea753b'
+import pandas as pd
+def get_time(time_string):
+    import time
+    data = time.strptime(time_string,'%d-%m-%Y %H:%M:%S')
+    return time.mktime(data)
+
+
+token='25ae661bd03cdd6b84f942f3aa847f2ac6ab9a7196e6fc0b0670f81859ba8143'
 password = 'Mita99*daw'
 userid =  'FT032354'
 
 from NorenRestApiPy.NorenApi import  NorenApi
+from api_helper import get_time
 
 class FlatTradeApiPy(NorenApi):
     def __init__(self):
@@ -19,16 +27,19 @@ api = FlatTradeApiPy()
 
 ret = api.set_session(userid= userid, password = password, usertoken= token)
 
-# print(api.get_limits())
+if ret != None:
+     print("Not none")
+     print(ret)
+     start_time = "30-10-2023 09:10:00"
+    #end_time = time.time()
+    
+     start_secs = get_time(start_time)
 
-exch  = 'NFO'
-query = 'NIFTY 26OCT CE'
-ret = api.searchscrip(exchange=exch, searchtext=query)
-import pandas as pd
-df = pd.DataFrame.from_dict(ret['values'])
-# print(df["optt"])
-
-ret = api.get_holdings()
-# print(ret)
-df = pd.DataFrame.from_dict(ret)
-print(df)
+     end_time = get_time("30-10-2023 09:20:00")
+     ret = api.get_time_price_series(exchange='NSE', token='26000', starttime=start_secs, endtime=end_time)
+    
+     df = pd.DataFrame.from_dict(ret)
+     print(df)            
+     print(f'{start_secs} to {end_time}')
+else:
+     print("value is None")
